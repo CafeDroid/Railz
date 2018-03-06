@@ -2,10 +2,15 @@ package com.cafedroid.android.railz;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class LiveStatusActivity extends AppCompatActivity {
     EditText trainEditText;
@@ -25,7 +30,13 @@ public class LiveStatusActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String train_no=trainEditText.getText().toString();
-                testTextView.setText(train_no);
+                long currentMilliSec = System.currentTimeMillis();
+                String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(currentMilliSec);
+                URL url = NetworkUtils.generateLiveStatusURL(train_no,currentDate);
+                testTextView.setText(url.toString());
+                Log.e("Apna khud ka url", "onClick: "+url );
+
+
             }
         });
     }

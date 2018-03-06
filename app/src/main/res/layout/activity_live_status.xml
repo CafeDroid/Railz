@@ -33,6 +33,7 @@
         android:layout_height="match_parent"
         android:text="text"
         android:id="@+id/test_tv"
+        android:textIsSelectable="true"
         />
     </ScrollView>
 
