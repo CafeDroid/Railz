@@ -3,6 +3,7 @@ package com.cafedroid.android.railz;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -42,7 +44,10 @@ public class LiveStatusActivity extends AppCompatActivity {
                     long currentMilliSec = System.currentTimeMillis();
                     String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(currentMilliSec);
                     URL url = NetworkUtils.generateLiveStatusURL(train_no, currentDate);
-                    testTextView.setText(url.toString());
+                    LiveAsyncTask liveAsyncTask = new LiveAsyncTask();
+                    liveAsyncTask.execute(url);
+
+
                     Log.e("Apna khud ka url", "onClick: " + url);
 
 
@@ -61,6 +66,25 @@ public class LiveStatusActivity extends AppCompatActivity {
             activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         }
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    public class LiveAsyncTask extends AsyncTask<URL,Void,String>{
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            String jsonResponse="Found";
+            try {
+                jsonResponse = NetworkUtils.makeHttpRequest(urls[0]);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return jsonResponse;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            testTextView.setText(s);
+        }
     }
 
 }
